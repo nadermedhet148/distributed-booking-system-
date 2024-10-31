@@ -5,11 +5,6 @@ import (
 )
 
 func main() {
-	seeds.SeedPaymentMethods()
-	seeds.SeedPaymentMethodRates()
-	seeds.SeedPaymentMethodLinks()
-	
-	// optional seed
-	// seeds.SeedUserInvoiceLogs()
-	// seeds.SeedGopayLinkings()
+
+	seeds.SeedGopayLinkings()
 }
