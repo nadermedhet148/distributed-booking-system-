@@ -8,9 +8,6 @@ import (
 	"github.com/coroo/go-starter/app/repositories"
 	"github.com/coroo/go-starter/app/usecases"
 	"github.com/gin-gonic/gin"
-
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func Api() {
@@ -25,12 +22,11 @@ func Api() {
 		})
 	})
 	var (
-		gopayLinkingRepository repositories.GopayLinkingRepository = repositories.NewGopayLinkingRepository()
-		gopayLinkingService    usecases.GopayLinkingService        = usecases.NewGopayLinkingService(gopayLinkingRepository)
+		AvailableSlotRepository repositories.AvailableSlotRepository = repositories.NewAvailableSlotRepository()
+		AvailableSlotService    usecases.AvailableSlotService        = usecases.NewAvailableSlotService(AvailableSlotRepository)
 	)
-	deliveries.NewGopayLinkingController(router, API_PREFIX, gopayLinkingService)
+	deliveries.NewAvailableSlotController(router, API_PREFIX, AvailableSlotService)
 
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	console.Schedule()
 	router.Run(":" + os.Getenv("MAIN_PORT"))
 }
