@@ -27,7 +27,7 @@ func NewTicketController(router *gin.Engine, apiPrefix string, TicketService use
 	TicketsGroup := router.Group(apiPrefix + "Ticket")
 	{
 		TicketsGroup.GET("", handlerTicket.TicketsIndex)
-		TicketsGroup.POST("create", handlerTicket.TicketCreate)
+		TicketsGroup.POST("", handlerTicket.TicketCreate)
 	}
 }
 

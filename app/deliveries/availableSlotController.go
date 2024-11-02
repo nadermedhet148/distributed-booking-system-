@@ -27,7 +27,7 @@ func NewAvailableSlotController(router *gin.Engine, apiPrefix string, AvailableS
 	AvailableSlotsGroup := router.Group(apiPrefix + "AvailableSlot")
 	{
 		AvailableSlotsGroup.GET("", handlerAvailableSlot.AvailableSlotsIndex)
-		AvailableSlotsGroup.POST("create", handlerAvailableSlot.AvailableSlotCreate)
+		AvailableSlotsGroup.POST("", handlerAvailableSlot.AvailableSlotCreate)
 	}
 }
 

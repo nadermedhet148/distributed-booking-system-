@@ -24,8 +24,11 @@ func Api() {
 	var (
 		AvailableSlotRepository repositories.AvailableSlotRepository = repositories.NewAvailableSlotRepository()
 		AvailableSlotService    usecases.AvailableSlotService        = usecases.NewAvailableSlotService(AvailableSlotRepository)
+		TicketRepository        repositories.TicketRepository        = repositories.NewTicketRepository()
+		TicketService           usecases.TicketService               = usecases.TicketService(TicketRepository)
 	)
 	deliveries.NewAvailableSlotController(router, API_PREFIX, AvailableSlotService)
+	deliveries.NewTicketController(router, API_PREFIX, TicketService)
 
 	console.Schedule()
 	router.Run(":" + os.Getenv("MAIN_PORT"))
