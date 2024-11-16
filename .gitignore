@@ -1,5 +1,4 @@
 storage/logs/*
-.env
 docs
 cp.out
 test.db

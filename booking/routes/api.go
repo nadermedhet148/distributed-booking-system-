@@ -3,7 +3,6 @@ package routes
 import (
 	"os"
 
-	"github.com/coroo/go-starter/app/console"
 	"github.com/coroo/go-starter/app/deliveries"
 	"github.com/coroo/go-starter/app/repositories"
 	"github.com/coroo/go-starter/app/usecases"
@@ -30,6 +29,5 @@ func Api() {
 	deliveries.NewAvailableSlotController(router, API_PREFIX, AvailableSlotService)
 	deliveries.NewTicketController(router, API_PREFIX, TicketService)
 
-	console.Schedule()
 	router.Run(":" + os.Getenv("MAIN_PORT"))
 }
