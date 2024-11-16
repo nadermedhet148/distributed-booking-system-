@@ -1,15 +1,6 @@
 version: '3.4'
 
 services:
-  gostarter:
-    image: gostarter
-    build: .
-    ports:
-      - 8085:8085
-    depends_on:
-      - mysql
-    environment:
-      - DB_HOST=mysql
   mysql:
     image: mysql:8.0
     restart: always
@@ -49,8 +40,29 @@ services:
       RABBITMQ_DEFAULT_VHOST: '/'
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-      
-# Names our volume
+  booking1:
+    image: booking
+    environment:
+      DB_HOST: 'mysql'
+      REDIS_HOST: 'redis:6379'
+    ports:
+      - "8081:8080" 
+  booking2:
+    image: booking
+    environment:
+      DB_HOST: 'mysql'
+      REDIS_HOST: 'redis:6379'
+    ports:
+      - "8082:8080" 
+  loadbalancer:
+    image: booking-lb
+    depends_on:
+      - booking1
+      - booking2
+    ports:
+      - "8001:80"
+    expose:
+      - 8001
 volumes:
   db_data:
   rabbitmq_data:
