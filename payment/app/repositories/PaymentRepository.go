@@ -36,7 +36,7 @@ func (db *PaymentDatabase) Save(entity entity.Payment) (int, error) {
 	data := &entity
 	data.CreatedAt = time.Now()
 	data.UpdatedAt = time.Now()
-	err := db.connection.Create(data)
+	err := db.connection.Save(data)
 	if err.Error != nil {
 		return 0, err.Error
 	}

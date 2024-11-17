@@ -33,7 +33,7 @@ func (usecases *paymentService) SavePayment(Payment entity.Payment) (int, error)
 		REF_NUMBER: Payment.REF_NUMBER,
 	})
 
-	if res.Status != "" || err != nil {
+	if res.Status != "success" || err != nil {
 		Payment.Status = "failed"
 		usecases.repositories.Save(Payment)
 		return 0, err

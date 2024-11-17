@@ -79,7 +79,8 @@ func (usecases *ticketService) TicketCreateWithHttpTransaction(ticket entity.Tic
 
 	ticket.Status = "payment_pending"
 	id, err := usecases.SaveTicket(ticket)
-	if err != nil {
+	ticket.ID = id
+	if err == nil {
 		response, err := paymentService.SendPayment(externalServices.PaymentRequest{
 			REF_NUMBER: ticket.REF_NUMBER,
 		})

@@ -54,6 +54,7 @@ func (db *TicketDatabase) Save(Ticket entity.Ticket) (int, error) {
 func (db *TicketDatabase) UpdateTicket(Ticket entity.Ticket) error {
 	data := &Ticket
 	data.UpdatedAt = time.Now()
+	data.CreatedAt = time.Now()
 	db.connection.Save(data)
 	return nil
 }
