@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/coroo/go-starter/app/entity"
+	"github.com/coroo/go-starter/app/externalServices"
 	"github.com/coroo/go-starter/app/repositories"
 	"github.com/coroo/go-starter/config"
 
@@ -16,6 +17,7 @@ type TicketService interface {
 	SaveTicketWithLock(Ticket entity.Ticket) (int, error)
 	SaveTicketWithDLock(Ticket entity.Ticket) (int, error)
 	GetAllTickets() []entity.Ticket
+	TicketCreateWithHttpTransaction(Ticket entity.Ticket) (int, error)
 }
 
 type ticketService struct {
@@ -68,5 +70,26 @@ func (usecases *ticketService) SaveTicketWithDLock(ticket entity.Ticket) (int, e
 	if ok, err := mutex.Unlock(); !ok || err != nil {
 		return 0, errors.New("unlock failed")
 	}
+	return id, err
+}
+
+func (usecases *ticketService) TicketCreateWithHttpTransaction(ticket entity.Ticket) (int, error) {
+
+	paymentService := externalServices.PaymentService{}
+
+	ticket.Status = "payment_pending"
+	id, err := usecases.SaveTicket(ticket)
+	if err != nil {
+		response, err := paymentService.SendPayment(externalServices.PaymentRequest{
+			REF_NUMBER: ticket.REF_NUMBER,
+		})
+		if response.Status != "success" || err != nil {
+			ticket.Status = "failed"
+			usecases.repositories.UpdateTicket(ticket)
+			return 0, errors.New("payment failed")
+		}
+	}
+	ticket.Status = "success"
+	err = usecases.repositories.UpdateTicket(ticket)
 	return id, err
 }

@@ -13,9 +13,9 @@ import (
 )
 
 type TicketRepository interface {
-	Save(paymentMethod entity.Ticket) (int, error)
-	UpdateTicket(paymentMethod entity.Ticket) error
-	DeleteTicket(paymentMethod entity.Ticket) error
+	Save(ticket entity.Ticket) (int, error)
+	UpdateTicket(ticket entity.Ticket) error
+	DeleteTicket(ticket entity.Ticket) error
 	GetAllTickets() []entity.Ticket
 	GetTicket(id string) []entity.Ticket
 	GetTicketBySlotId(slotId int) entity.Ticket
