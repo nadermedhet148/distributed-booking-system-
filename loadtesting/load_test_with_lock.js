@@ -1,8 +1,8 @@
 import http from 'k6/http'
 
 export let options = {
-  vus: 1000,
-  iterations: 1000,
+  vus: 10,
+  iterations: 10000,
 };
 
 export default function () {
