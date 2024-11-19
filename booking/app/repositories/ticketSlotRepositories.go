@@ -17,7 +17,7 @@ type TicketRepository interface {
 	UpdateTicket(ticket entity.Ticket) error
 	DeleteTicket(ticket entity.Ticket) error
 	GetAllTickets() []entity.Ticket
-	GetTicket(id string) []entity.Ticket
+	GetTicket(id string) entity.Ticket
 	GetTicketBySlotId(slotId int) entity.Ticket
 }
 
@@ -70,9 +70,9 @@ func (db *TicketDatabase) GetAllTickets() []entity.Ticket {
 	return Tickets
 }
 
-func (db *TicketDatabase) GetTicket(id string) []entity.Ticket {
-	var Ticket []entity.Ticket
-	db.connection.Preload(clause.Associations).Where("id = ?", id).First(&Ticket)
+func (db *TicketDatabase) GetTicket(ref_number string) entity.Ticket {
+	var Ticket entity.Ticket
+	db.connection.Preload(clause.Associations).Where("ref_number = ?", ref_number).First(&Ticket)
 	return Ticket
 }
 

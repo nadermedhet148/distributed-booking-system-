@@ -31,6 +31,7 @@ func NewTicketController(router *gin.Engine, apiPrefix string, TicketService use
 		TicketsGroup.POST("/lock", handlerTicket.TicketCreateWithLock)
 		TicketsGroup.POST("/d-lock", handlerTicket.TicketCreateWithDLock)
 		TicketsGroup.POST("/http-transaction", handlerTicket.TicketCreateWithHttpTransaction)
+		TicketsGroup.POST("/http-mq", handlerTicket.TicketCreateWithRabbitMq)
 
 	}
 }
@@ -109,6 +110,20 @@ func (deliveries *ticketController) TicketCreateWithHttpTransaction(c *gin.Conte
 	c.ShouldBindJSON(&TicketEntity)
 
 	TicketPK, err := deliveries.usecases.TicketCreateWithHttpTransaction(TicketEntity)
+	if err != nil {
+		c.JSON(http.StatusConflict, err)
+	} else {
+		TicketEntity.ID = TicketPK
+		c.JSON(http.StatusOK, TicketEntity)
+	}
+}
+
+func (deliveries *ticketController) TicketCreateWithRabbitMq(c *gin.Context) {
+
+	var TicketEntity entity.Ticket
+	c.ShouldBindJSON(&TicketEntity)
+
+	TicketPK, err := deliveries.usecases.TicketCreateWithRabbitMq(TicketEntity)
 	if err != nil {
 		c.JSON(http.StatusConflict, err)
 	} else {

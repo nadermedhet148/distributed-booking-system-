@@ -1,9 +1,9 @@
-package main
+package rabbitmq
 
 import (
 	"log"
+	"os"
 
-	"github.com/coroo/go-starter/app/entity"
 	"github.com/streadway/amqp"
 )
 
@@ -13,8 +13,8 @@ type PaymentProducer struct {
 	queue      amqp.Queue
 }
 
-func NewPaymentProducer(amqpURL, queueName string) (*PaymentProducer, error) {
-	conn, err := amqp.Dial(amqpURL)
+func NewPaymentProducer() (*PaymentProducer, error) {
+	conn, err := amqp.Dial(os.Getenv("AMQP_URL"))
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +25,7 @@ func NewPaymentProducer(amqpURL, queueName string) (*PaymentProducer, error) {
 	}
 
 	q, err := ch.QueueDeclare(
-		queueName,
+		os.Getenv("PAYMENT_QUEUE"),
 		true,
 		false,
 		false,
@@ -64,17 +64,4 @@ func (p *PaymentProducer) PublishPayment(payment string) error {
 func (p *PaymentProducer) Close() {
 	p.channel.Close()
 	p.connection.Close()
-}
-
-func publishPayment(ticket entity.Ticket) {
-	producer, err := NewPaymentProducer("amqp://guest:guest@localhost:5672/", "payments")
-	if err != nil {
-		log.Fatalf("Failed to create payment producer: %v", err)
-	}
-	defer producer.Close()
-
-	err = producer.PublishPayment("Payment details here")
-	if err != nil {
-		log.Fatalf("Failed to publish payment: %v", err)
-	}
 }

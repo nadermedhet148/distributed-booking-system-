@@ -1,11 +1,13 @@
 package usecases
 
 import (
+	"encoding/json"
 	"errors"
 	"sync"
 
 	"github.com/coroo/go-starter/app/entity"
 	"github.com/coroo/go-starter/app/externalServices"
+	"github.com/coroo/go-starter/app/rabbitmq"
 	"github.com/coroo/go-starter/app/repositories"
 	"github.com/coroo/go-starter/config"
 
@@ -18,6 +20,7 @@ type TicketService interface {
 	SaveTicketWithDLock(Ticket entity.Ticket) (int, error)
 	GetAllTickets() []entity.Ticket
 	TicketCreateWithHttpTransaction(Ticket entity.Ticket) (int, error)
+	TicketCreateWithRabbitMq(Ticket entity.Ticket) (int, error)
 }
 
 type ticketService struct {
@@ -92,5 +95,28 @@ func (usecases *ticketService) TicketCreateWithHttpTransaction(ticket entity.Tic
 	}
 	ticket.Status = "success"
 	err = usecases.repositories.UpdateTicket(ticket)
+	return id, err
+}
+
+func (usecases *ticketService) TicketCreateWithRabbitMq(ticket entity.Ticket) (int, error) {
+
+	ticket.Status = "payment_pending"
+	id, err := usecases.SaveTicket(ticket)
+	ticket.ID = id
+	if err == nil {
+		producer, err := rabbitmq.NewPaymentProducer()
+		if err != nil {
+			return 0, errors.New("payment failed")
+		}
+		defer producer.Close()
+		ticketJSON, err := json.Marshal(ticket)
+		if err != nil {
+			return 0, errors.New("failed to marshal ticket to JSON")
+		}
+		err = producer.PublishPayment(string(ticketJSON))
+		if err != nil {
+			return 0, errors.New("payment failed")
+		}
+	}
 	return id, err
 }
