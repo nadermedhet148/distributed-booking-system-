@@ -19,5 +19,11 @@ The Distributed Booking System is a scalable and efficient system designed to ha
     docker-compose uo
     ```
 
+## run load testing 
+
+- k6 run (loadtesting/load_test_with_dlock.js)
+- k6 run (loadtesting/load_test_with_lock.js)
+- k6 run (loadtesting/load_test_without_lock.js)
+
 ## Contributing
 We welcome contributions!.
